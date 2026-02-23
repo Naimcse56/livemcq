@@ -50,7 +50,11 @@ export default function EmployeeList({ data }: EmployeeListProps) {
     },
 
     { accessorKey: "name", header: "Name" },
-    { accessorKey: "email", header: "Email" },
+    { accessorKey: "email", header: "Email", 
+        cell: ({ getValue }) => (
+            <span className="cursor-pointer">{getValue<string>()}</span>
+        ),
+    },
     { accessorKey: "mobile", header: "Mobile" },
     {
     accessorKey: "status",
@@ -58,7 +62,7 @@ export default function EmployeeList({ data }: EmployeeListProps) {
     cell: ({ row }) => {
         const status = row.getValue("status") as string
         return (
-        <Badge variant={status === "active" ? "default" : "destructive"}>
+        <Badge variant={status === "active" ? "default" : "destructive"} className="capitalize">
             {status}
         </Badge>
         )
@@ -69,10 +73,10 @@ export default function EmployeeList({ data }: EmployeeListProps) {
     header: "Action",
     cell: () => (
         <div className="flex gap-2">
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" className="cursor-pointer">
             Edit
         </Button>
-        <Button size="sm" variant="destructive">
+        <Button size="sm" variant="destructive" className="cursor-pointer">
             Delete
         </Button>
         </div>
