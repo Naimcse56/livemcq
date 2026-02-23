@@ -20,7 +20,7 @@ interface ManageProps {
   onOpenChange: (open: boolean) => void
 }
 
-type Role = "Staff" | "Teacher" | "Admin" | "Student" | "Guest"
+type Role = "Admin" | "Staff" | "Teacher" | "Student" | "Guest"
 type Gender = "male" | "female"
 
 interface FormValues {
@@ -31,8 +31,8 @@ interface FormValues {
   mobile: string
   dateOfJoin: string
   nidNumber: string
-  gender: Gender
-  role: Role
+  gender: Gender | ""
+  role: Role | ""
 }
 
 // Yup schema
@@ -53,11 +53,11 @@ const schema: yup.ObjectSchema<FormValues> = yup.object({
   nidNumber: yup.string().required("NID Number is required"),
   gender: yup
     .mixed<Gender>()
-    .oneOf(["male", "female"])
+    .oneOf(["male", "female"], "Gender is required")
     .required("Gender is required"),
   role: yup
     .mixed<Role>()
-    .oneOf(["Staff", "Teacher", "Admin", "Student", "Guest"])
+    .oneOf(["Staff", "Teacher", "Admin", "Student", "Guest"], "Role is required")
     .required("Role is required"),
 })
 
@@ -70,6 +70,10 @@ export default function CreateEmployee({ isOpen, onOpenChange }: ManageProps) {
     reset,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      gender: "" as Gender | "",
+      role: "" as Role | "",
+    },
   })
 
   const onSubmit = (data: FormValues) => {
@@ -86,7 +90,7 @@ export default function CreateEmployee({ isOpen, onOpenChange }: ManageProps) {
           <SheetDescription>Fill the information below to create a new employee.</SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex overflow-y-auto flex-col flex-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1">
           <div className="flex-1 overflow-y-auto px-4 py-4">
             <div className="grid gap-5">
 
@@ -132,14 +136,14 @@ export default function CreateEmployee({ isOpen, onOpenChange }: ManageProps) {
                 <p className="text-red-500 text-sm">{errors.nidNumber?.message}</p>
               </div>
 
-              {/* ShadCN Select for Gender */}
+              {/* Gender Select */}
               <div className="grid gap-2">
                 <Label>Gender</Label>
                 <Controller
                   name="gender"
                   control={control}
                   render={({ field }) => (
-                    <Select {...field}>
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
@@ -153,14 +157,14 @@ export default function CreateEmployee({ isOpen, onOpenChange }: ManageProps) {
                 <p className="text-red-500 text-sm">{errors.gender?.message}</p>
               </div>
 
-              {/* ShadCN Select for Role */}
+              {/* Role Select */}
               <div className="grid gap-2">
                 <Label>Role</Label>
                 <Controller
                   name="role"
                   control={control}
                   render={({ field }) => (
-                    <Select {...field}>
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select Role" />
                       </SelectTrigger>
