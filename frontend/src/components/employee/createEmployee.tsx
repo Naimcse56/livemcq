@@ -90,7 +90,7 @@ export default function CreateEmployee({ isOpen, onOpenChange }: ManageProps) {
           <SheetDescription>Fill the information below to create a new employee.</SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex overflow-y-auto flex-col flex-1">
           <div className="flex-1 overflow-y-auto px-4 py-4">
             <div className="grid gap-5">
 
