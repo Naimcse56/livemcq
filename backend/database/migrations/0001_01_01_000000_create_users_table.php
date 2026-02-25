@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone', 22)->nullable();
             $table->string('user_type', 60)->nullable();
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
-            $table->enum('status', ['active', 'inactive'])->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar', 190)->nullable();
