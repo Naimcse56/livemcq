@@ -110,9 +110,7 @@ class EmployeeController extends Controller
     {
         try {
 
-            $user = User::with('employee')
-                ->where('user_type', 'employee')
-                ->findOrFail($id);
+            $user = User::with('employee')->findOrFail($id);
 
             return response()->json([
                 'status' => true,
@@ -214,8 +212,7 @@ class EmployeeController extends Controller
     {
         try {
 
-            $user = User::where('user_type', 'employee')
-                ->findOrFail($id);
+            $user = User::findOrFail($id);
 
             DB::beginTransaction();
 

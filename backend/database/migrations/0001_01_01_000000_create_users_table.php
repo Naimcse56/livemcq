@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar', 190)->nullable();
-            $table->enum('is_verified', ['pending', 'verified', 'rejected'])->nullable();
+            $table->enum('is_verified', ['pending', 'verified', 'rejected'])->default('pending');
             $table->rememberToken();
             $table->timestamps();
         });
