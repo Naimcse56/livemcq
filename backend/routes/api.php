@@ -7,6 +7,6 @@ use App\Http\Controllers\EmployeeController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-Route::middleware('auth:sanctum')->group(function () {
+// Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('employees', EmployeeController::class);
-});
+// });
