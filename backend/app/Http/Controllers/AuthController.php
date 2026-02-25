@@ -54,6 +54,7 @@ class AuthController extends Controller
             }
 
             // Create Token
+            $user->tokens()->delete();
             $token = $user->createToken('auth_token')->plainTextToken;
 
             DB::commit();
