@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -38,19 +39,26 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'phone' => 'nullable|string',
-            'user_type' => 'required|in:admin,staff',
-            'gender' => 'nullable|in:male,female,other',
-            'status' => 'nullable|in:active,inactive',
+        $validator = Validator::make($request->all(), [
+                                'name' => 'required|string|max:255',
+                                'email' => 'required|email|unique:users,email',
+                                'password' => 'required|min:6',
+                                'phone' => 'nullable|string',
+                                'user_type' => 'required|in:admin,staff',
+                                'gender' => 'nullable|in:male,female,other',
+                                'status' => 'nullable|in:active,inactive',
+                                'nid_number' => 'nullable|string|max:50',
+                                'address' => 'nullable|string',
+                                'joining_date' => 'nullable|date',
+                            ]);
 
-            'nid_number' => 'nullable|string|max:50',
-            'address' => 'nullable|string',
-            'joining_date' => 'nullable|date',
-        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
         try {
 
@@ -126,24 +134,29 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+                                'name' => 'sometimes|string|max:255',
+                                'email' => 'sometimes|email|unique:users,email,' . $id,
+                                'password' => 'nullable|min:6',
+                                'phone' => 'nullable|string',
+                                'user_type' => 'required|in:admin,staff',
+                                'gender' => 'nullable|in:male,female,other',
+                                'status' => 'nullable|in:active,inactive',
+                                'nid_number' => 'nullable|string|max:50',
+                                'address' => 'nullable|string',
+                                'joining_date' => 'nullable|date',
+                            ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
         try {
 
-            $user = User::where('user_type', 'employee')
-                ->findOrFail($id);
-
-            $request->validate([
-                'name' => 'sometimes|string|max:255',
-                'email' => 'sometimes|email|unique:users,email,' . $id,
-                'password' => 'nullable|min:6',
-                'phone' => 'nullable|string',
-                'user_type' => 'required|in:admin,staff',
-                'gender' => 'nullable|in:male,female,other',
-                'status' => 'nullable|in:active,inactive',
-
-                'nid_number' => 'nullable|string|max:50',
-                'address' => 'nullable|string',
-                'joining_date' => 'nullable|date',
-            ]);
+            $user = User::findOrFail($id);
 
             DB::beginTransaction();
 
