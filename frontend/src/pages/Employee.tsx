@@ -1,3 +1,10 @@
+import { AppSidebar } from "@/components/app-sidebar"
+import Header from "@/components/header"
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@/components/ui/sidebar"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import CreateEmployee from "@/components/employee/createEmployee"
@@ -28,24 +35,30 @@ export default function EmployeePage() {
   ])
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Top Section */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Employee List</h2>
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <Header />
+              <div className="p-6 space-y-6">
+                {/* Top Section */}
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-semibold">Employee List</h2>
 
-        <Button onClick={() => setIsManage(true)}>
-          Add Employee
-        </Button>
-      </div>
+                  <Button onClick={() => setIsManage(true)}>
+                    Add Employee
+                  </Button>
+                </div>
 
-      {/* Table Section */}
-      <EmployeeList data={employees} />
+                {/* Table Section */}
+                <EmployeeList data={employees} />
 
-      {/* Create Modal */}
-      <CreateEmployee
-        isOpen={isManage}
-        onOpenChange={setIsManage}
-      />
-    </div>
+                {/* Create Modal */}
+                <CreateEmployee
+                  isOpen={isManage}
+                  onOpenChange={setIsManage}
+                />
+              </div>
+        </SidebarInset>
+      </SidebarProvider>
   )
 }
