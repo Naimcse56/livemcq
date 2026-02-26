@@ -43,6 +43,7 @@ export function LoginForm({
 
       // Save token
       localStorage.setItem("token", response.data.token)
+      localStorage.setItem("user", JSON.stringify(response.data.data))
 
       toast.success("Login successful 🎉")
 

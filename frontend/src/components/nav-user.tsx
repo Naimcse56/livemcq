@@ -59,6 +59,7 @@ const handleLogout = async () => {
 
     // Remove token
     localStorage.removeItem("token")
+    localStorage.removeItem("user")
 
     toast.success("Logout successful 🎉")
 
