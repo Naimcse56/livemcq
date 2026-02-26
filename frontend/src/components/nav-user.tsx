@@ -29,6 +29,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useNavigate } from "react-router-dom"
+import toast from "react-hot-toast"
 
 export function NavUser({
   user,
@@ -39,8 +41,34 @@ export function NavUser({
     avatar: string
   }
 }) {
-  const { isMobile } = useSidebar()
+const { isMobile } = useSidebar()
 
+const navigate = useNavigate()
+
+const handleLogout = async () => {
+  try {
+    const token = localStorage.getItem("token")
+
+    await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    // Remove token
+    localStorage.removeItem("token")
+
+    toast.success("Logout successful 🎉")
+
+    // React way redirect
+    navigate("/login")
+
+  } catch (error) {
+    toast.error("Logout failed!")
+  }
+}
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -102,7 +130,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
