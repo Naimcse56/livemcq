@@ -5,35 +5,49 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 
-import { useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import CreateEmployee from "@/components/employee/createEmployee"
 import EmployeeList from "@/components/employee/employeeList"
 import type { Employee } from "@/components/employee/employeeList"
+import axios from "axios"
 
 export default function EmployeePage() {
   const [isManage, setIsManage] = useState(false)
 
-  // Dummy Data (Later API দিয়ে replace করবে)
-  
-  const [employees] = useState<Employee[]>([
-    { id: 1, name: "Naimul Islam", email: "naimul@example.com", mobile: "01700000001", status: "active" },
-    { id: 2, name: "John Doe", email: "john@example.com", mobile: "01700000002", status: "inactive" },
-    { id: 3, name: "Sarah Khan", email: "sarah@example.com", mobile: "01700000003", status: "active" },
-    { id: 4, name: "Michael Smith", email: "michael@example.com", mobile: "01700000004", status: "active" },
-    { id: 5, name: "Ayesha Rahman", email: "ayesha@example.com", mobile: "01700000005", status: "inactive" },
-    { id: 6, name: "David Lee", email: "david@example.com", mobile: "01700000006", status: "active" },
-    { id: 7, name: "Emma Watson", email: "emma@example.com", mobile: "01700000007", status: "active" },
-    { id: 8, name: "Hasan Mahmud", email: "hasan@example.com", mobile: "01700000008", status: "inactive" },
-    { id: 9, name: "Olivia Brown", email: "olivia@example.com", mobile: "01700000009", status: "active" },
-    { id: 10, name: "William Clark", email: "william@example.com", mobile: "01700000010", status: "active" },
-    { id: 11, name: "Sophia Turner", email: "sophia@example.com", mobile: "01700000011", status: "inactive" },
-    { id: 12, name: "Liam Wilson", email: "liam@example.com", mobile: "01700000012", status: "active" },
-    { id: 13, name: "Isabella Taylor", email: "isabella@example.com", mobile: "01700000013", status: "active" },
-    { id: 14, name: "Noah Anderson", email: "noah@example.com", mobile: "01700000014", status: "inactive" },
-    { id: 15, name: "Mia Thomas", email: "mia@example.com", mobile: "01700000015", status: "active" },
-  ])
+  const [employees, setEmployees] = useState<Employee[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
 
+  const hasFetched = useRef(false)
+
+  useEffect(() => {
+    if (hasFetched.current) return
+    hasFetched.current = true
+
+    fetchEmployees()
+  }, [])
+
+  const fetchEmployees = async () => {
+    try {
+      const token = localStorage.getItem("token")
+
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/employees`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      setEmployees(res.data.data)
+    } catch (error) {
+      console.error("Error fetching employees:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
         <SidebarProvider>
           <AppSidebar />
