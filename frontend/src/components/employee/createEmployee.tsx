@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
+import toast from "react-hot-toast"
 
 interface ManageProps {
   isOpen: boolean
@@ -32,7 +33,7 @@ interface FormValues {
   dateOfJoin: string
   nidNumber: string
   gender: Gender | ""
-  role: Role | ""
+  user_type: Role | ""
 }
 
 // Yup schema
@@ -55,7 +56,7 @@ const schema: yup.ObjectSchema<FormValues> = yup.object({
     .mixed<Gender>()
     .oneOf(["male", "female"], "Gender is required")
     .required("Gender is required"),
-  role: yup
+  user_type: yup
     .mixed<Role>()
     .oneOf(["Staff", "Teacher", "Admin", "Student", "Guest"], "Role is required")
     .required("Role is required"),
@@ -72,14 +73,42 @@ export default function CreateEmployee({ isOpen, onOpenChange }: ManageProps) {
     resolver: yupResolver(schema),
     defaultValues: {
       gender: "" as Gender | "",
-      role: "" as Role | "",
+      user_type: "" as Role | "",
     },
   })
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Employee Data:", data)
-    reset()
-    onOpenChange(false)
+  // const onSubmit = (data: FormValues) => {
+  //   console.log("Employee Data:", data)
+  //   reset()
+  //   onOpenChange(false)
+  // }
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/employees`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await res.json()
+
+      if (!res.ok) {
+        throw new Error(result.message || "Something went wrong")
+      }
+
+      console.log("Success:", result)
+      toast.success("Added successfully!")
+      reset()
+      onOpenChange(false)
+    } catch (error: any) {
+      toast.error("Error:", error.message)
+      console.error("Error:", error.message)
+    }
   }
 
   return (
@@ -161,7 +190,7 @@ export default function CreateEmployee({ isOpen, onOpenChange }: ManageProps) {
               <div className="grid gap-2">
                 <Label>Role</Label>
                 <Controller
-                  name="role"
+                  name="user_type"
                   control={control}
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
@@ -178,7 +207,7 @@ export default function CreateEmployee({ isOpen, onOpenChange }: ManageProps) {
                     </Select>
                   )}
                 />
-                <p className="text-red-500 text-sm">{errors.role?.message}</p>
+                <p className="text-red-500 text-sm">{errors.user_type?.message}</p>
               </div>
 
             </div>

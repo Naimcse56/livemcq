@@ -40,16 +40,16 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-                                'name' => 'required|string|max:255',
+                                'fullName' => 'required|string|max:255',
                                 'email' => 'required|email|unique:users,email',
                                 'password' => 'required|min:6',
                                 'phone' => 'nullable|string',
-                                'user_type' => 'required|in:admin,staff',
+                                'user_type' => 'required|in:Admin,Staff,Teacher,Student,Guest',
                                 'gender' => 'nullable|in:male,female,other',
                                 'status' => 'nullable|in:active,inactive',
-                                'nid_number' => 'nullable|string|max:50',
+                                'nidNumber' => 'nullable|string|max:50',
                                 'address' => 'nullable|string',
-                                'joining_date' => 'nullable|date',
+                                'dateOfJoin' => 'nullable|date',
                             ]);
 
         if ($validator->fails()) {
@@ -66,21 +66,21 @@ class EmployeeController extends Controller
 
             // Create User
             $user = User::create([
-                'name' => $request->name,
+                'name' => $request->fullName,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
                 'gender' => $request->gender,
-                'status' => $request->status,
+                'status' => 1,
                 'user_type' => $request->user_type,
             ]);
 
             // Create Employee
             Employee::create([
                 'user_id' => $user->id,
-                'nid_number' => $request->nid_number,
+                'nid_number' => $request->nidNumber,
                 'address' => $request->address,
-                'joining_date' => $request->joining_date,
+                'joining_date' => $request->dateOfJoin,
             ]);
 
             DB::commit();
@@ -137,7 +137,7 @@ class EmployeeController extends Controller
                                 'email' => 'sometimes|email|unique:users,email,' . $id,
                                 'password' => 'nullable|min:6',
                                 'phone' => 'nullable|string',
-                                'user_type' => 'required|in:admin,staff',
+                                'user_type' => 'required|in:Admin,Staff,Teacher,Student,Guest',
                                 'gender' => 'nullable|in:male,female,other',
                                 'status' => 'nullable|in:active,inactive',
                                 'nid_number' => 'nullable|string|max:50',

@@ -61,7 +61,7 @@ const handleLogout = async () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
 
-    toast.success("Logout successful 🎉")
+    toast.success("Logout successful")
 
     // React way redirect
     navigate("/login")
